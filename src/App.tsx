@@ -1,17 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useRef, TouchEvent } from "react";
 
-import { useRef } from "react";
+const VideoZoom: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [scale, setScale] = useState<number>(1);
+  const [lastTouch, setLastTouch] = useState<number>(0);
+  const [translate, setTranslate] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
+    null
+  );
 
-const VideoZoom = () => {
-  const videoRef = useRef(null);
-  const [scale, setScale] = useState(1);
-  const [lastTouch, setLastTouch] = useState(0);
-
-  const handleTouchMove = (e:any) => {
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 2) {
+      // Zooming
       const [touch1, touch2] = e.touches;
       const currentDistance = Math.sqrt(
         Math.pow(touch2.pageX - touch1.pageX, 2) +
@@ -21,16 +24,33 @@ const VideoZoom = () => {
       if (lastTouch) {
         const lastDistance = lastTouch;
         const scaleChange = currentDistance / lastDistance;
-
         setScale((prev) => Math.min(Math.max(prev * scaleChange, 1), 3));
       }
-
       setLastTouch(currentDistance);
+    } else if (e.touches.length === 1 && dragStart) {
+      // Panning
+      const touch = e.touches[0];
+      const deltaX = touch.pageX - dragStart.x;
+      const deltaY = touch.pageY - dragStart.y;
+
+      setTranslate((prev) => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY,
+      }));
+      setDragStart({ x: touch.pageX, y: touch.pageY });
+    }
+  };
+
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setDragStart({ x: touch.pageX, y: touch.pageY });
     }
   };
 
   const handleTouchEnd = () => {
     setLastTouch(0);
+    setDragStart(null);
   };
 
   return (
@@ -42,6 +62,7 @@ const VideoZoom = () => {
         width: "100%",
         height: "auto",
       }}
+      onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
@@ -51,7 +72,7 @@ const VideoZoom = () => {
         style={{
           width: "300px",
           height: "300px",
-          transform: `scale(${scale})`,
+          transform: `scale(${scale}) translate(${translate.x}px, ${translate.y}px)`,
           transformOrigin: "center center",
         }}
         src="/IMG_2225.MOV"
@@ -61,5 +82,3 @@ const VideoZoom = () => {
 };
 
 export default VideoZoom;
-
-
