@@ -1,6 +1,7 @@
 import { useState, useRef, TouchEvent } from "react";
 
-const VideoZoom: React.FC = () => {
+// Reusable VideoZoom component
+const VideoZoom: React.FC<{ videoSrc: string }> = ({ videoSrc }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scale, setScale] = useState<number>(1);
   const [lastTouch, setLastTouch] = useState<number>(0);
@@ -61,6 +62,7 @@ const VideoZoom: React.FC = () => {
         position: "relative",
         width: "100%",
         height: "auto",
+        marginBottom: "20px", // Add space between videos
       }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -74,11 +76,31 @@ const VideoZoom: React.FC = () => {
           height: "300px",
           transform: `scale(${scale}) translate(${translate.x}px, ${translate.y}px)`,
           transformOrigin: "center center",
+          border: "2px solid #000", // Add a border for better styling
         }}
-        src="/IMG_2225.MOV"
+        src={videoSrc}
       />
     </div>
   );
 };
 
-export default VideoZoom;
+const App: React.FC = () => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      {/* Video 1 */}
+      <VideoZoom videoSrc="/IMG_2225.MOV" />
+      
+      {/* Video 2 */}
+      <VideoZoom videoSrc="/IMG_2225  .MOV" />
+    </div>
+  );
+};
+
+export default App;
