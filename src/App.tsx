@@ -98,7 +98,7 @@ const App: React.FC = () => {
       <VideoZoom videoSrc="/IMG_2225.MOV" />
       
       {/* Video 2 */}
-      <VideoZoom videoSrc="/IMG_2225  .MOV" />
+      <VideoZoom videoSrc="/IMG_2225.MOV" />
     </div>
   );
 };
