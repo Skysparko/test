@@ -15,7 +15,7 @@ const VideoZoom: React.FC = () => {
   const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 2) {
       // Zooming
-      const [touch1, touch2] = e.touches;
+      const [touch1, touch2] = Array.from(e.touches);
       const currentDistance = Math.sqrt(
         Math.pow(touch2.pageX - touch1.pageX, 2) +
           Math.pow(touch2.pageY - touch1.pageY, 2)
